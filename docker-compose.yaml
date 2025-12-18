@@ -1,0 +1,34 @@
+# Use root/example as user/password credentials
+
+services:
+
+  db:
+    image: mysql:latest
+    container_name: mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      # Mount Sakila database files for automatic import on first startup
+      - ./sakila/sakila-schema.sql:/docker-entrypoint-initdb.d/01-sakila-schema.sql:ro
+      - ./sakila/sakila-data.sql:/docker-entrypoint-initdb.d/02-sakila-data.sql:ro
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    ports:
+      - "8083:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: example
+    depends_on:
+      - db
+
+volumes:
+  mysql_data:
+
