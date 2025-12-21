@@ -46,6 +46,56 @@ query = "SELECT DISTINCT customer_id FROM rental WHERE date(rental_date)='2005-0
 query = "SELECT c.email, r.return_date FROM customer c INNER JOIN rental r ON c.customer_id = r.customer_id WHERE date(r.rental_date) = '2005-06-14' ORDER BY r.return_date DESC"
 
 
+# Equality condition
+query = "SELECT DISTINCT c.first_name FROM customer c INNER JOIN rental r ON c.customer_id=r.customer_id WHERE year(r.rental_date)=2005 LIMIT 5;"
+
+# Inequality condition
+query = "SELECT DISTINCT c.first_name FROM customer c INNER JOIN rental r ON c.customer_id=r.customer_id WHERE year(r.rental_date)!=2005 LIMIT 5;"
+query = "SELECT DISTINCT c.first_name FROM customer c INNER JOIN rental r ON c.customer_id=r.customer_id WHERE year(r.rental_date)<>2005 LIMIT 5;"
+
+# Range
+query = "SELECT DISTINCT c.first_name FROM customer c INNER JOIN rental r ON c.customer_id=r.customer_id WHERE year(r.rental_date)>2005 LIMIT 5;"
+query = "SELECT DISTINCT c.first_name FROM customer c INNER JOIN rental r ON c.customer_id=r.customer_id WHERE year(r.rental_date)<2005 LIMIT 5;"
+
+# BETWEEN operator
+query = "SELECT customer_id, date(rental_date) FROM rental WHERE rental_date BETWEEN '2005-06-14' and '2005-06-16' LIMIT 5;"
+
+# IN operator
+query = "SELECT title, rating FROM film WHERE rating IN ('G','PG') LIMIT 5;"
+
+# NOT IN
+query = "SELECT title, rating FROM film WHERE rating NOT IN ('G','PG') LIMIT 5;"
+
+# wildcard _ 'exactly one character' , % ' any number of character'
+query = "SELECT title, rating FROM film WHERE title LIKE '_A%' LIMIT 5;"
+
+# regex
+query = "SELECT first_name FROM customer WHERE first_name REGEXP '^[XYZ]';"
+
+
+# Exercise 4-1
+# Which of the payment IDs would be returned by the following filter conditions?
+# customer_id <> 5 AND (amount > 8 OR date(payment_date) = '2005-08-23')
+query = "SELECT DISTINCT payment_id FROM payment WHERE customer_id <> 5 AND (amount > 8 OR date(payment_date) = '2005-08-23') AND payment_id BETWEEN 101 AND 120;"
+
+
+# Exercise 4-2
+# Which of the payment IDs would be returned by the following filter conditions?
+# customer_id = 5 AND NOT (amount > 6 OR date(payment_date) = '2005-06-19')
+query = "SELECT DISTINCT payment_id FROM payment WHERE customer_id = 5 AND NOT (amount > 6 OR date(payment_date) = '2005-06-19') AND payment_id BETWEEN 101 AND 120;"
+
+
+# Exercise 4-3
+# Construct a query that retrieves all rows from the payments table where the amount
+# is either 1.98, 7.98, or 9.98.
+query = "SELECT * FROM payment WHERE amount IN (1.98, 7.98, 9.98);"
+
+
+# Exercise 4-4
+# Construct a query that finds all customers whose last name contains an A in the sec‐
+# ond position and a W anywhere after the A.
+query = "SELECT * from customer WHERE last_name LIKE '_A%W%'"
+
 # Execute query
 results = executor.execute_query(query)
 
