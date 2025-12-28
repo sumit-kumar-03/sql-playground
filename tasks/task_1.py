@@ -96,6 +96,78 @@ query = "SELECT * FROM payment WHERE amount IN (1.98, 7.98, 9.98);"
 # ond position and a W anywhere after the A.
 query = "SELECT * from customer WHERE last_name LIKE '_A%W%'"
 
+
+# JOINS
+query = "SELECT c.first_name, a.address FROM customer c INNER JOIN address a ON a.address_id=c.address_id LIMIT 5;"
+
+
+# Multi Table JOINS
+query = "SELECT c.first_name, ct.city FROM customer c INNER JOIN address a ON c.address_id=a.address_id INNER JOIN city ct ON a.city_id=ct.city_id LIMIT 5;"
+
+
+# Using Subqueries as Tables
+query = "SELECT c.first_name, addr.city FROM customer c INNER JOIN (SELECT a.address_id, ct.city FROM address a INNER JOIN city ct ON ct.city_id=a.city_id) addr ON addr.address_id=c.address_id LIMIT 5;"
+
+
+# Exercise 5-1
+# Fill in the blanks (denoted by <#>) for the following query to obtain the results that
+# follow:
+# mysql> SELECT c.first_name, c.last_name, a.address, ct.city
+#  -> FROM customer c
+#  -> INNER JOIN address <1>
+#  -> ON c.address_id = a.address_id
+#  -> INNER JOIN city ct
+#  -> ON a.city_id = <2>
+#  -> WHERE a.district = 'California';
+# +------------+-----------+------------------------+----------------+
+# | first_name | last_name | address | city |
+# +------------+-----------+------------------------+----------------+
+# | PATRICIA | JOHNSON | 1121 Loja Avenue | San Bernardino |
+# | BETTY | WHITE | 770 Bydgoszcz Avenue | Citrus Heights |
+# | ALICE | STEWART | 1135 Izumisano Parkway | Fontana |
+# | ROSA | REYNOLDS | 793 Cam Ranh Avenue | Lancaster |
+# | RENEE | LANE | 533 al-Ayn Boulevard | Compton |
+# | KRISTIN | JOHNSTON | 226 Brest Manor | Sunnyvale |
+# | CASSANDRA | WALTERS | 920 Kumbakonam Loop | Salinas |
+# | JACOB | LANCE | 1866 al-Qatif Avenue | El Monte |
+# | RENE | MCALISTER | 1895 Zhezqazghan Drive | Garden Grove |
+# +------------+-----------+------------------------+----------------+
+# 9 rows in set (0.00 sec)
+query="""SELECT c.first_name, c.last_name, a.address, ct.city
+FROM customer c
+INNER JOIN address a
+ON c.address_id = a.address_id
+INNER JOIN city ct
+ON a.city_id = ct.city_id
+WHERE a.district = 'California';
+"""
+
+
+# Exercise 5-2
+# Write a query that returns the title of every film in which an actor with the first name
+# JOHN appeared.
+# Test Your Knowledge | 99
+query = """SELECT f.title, a.first_name, a.last_name
+FROM film f
+INNER JOIN film_actor fa
+ON fa.film_id = f.film_id
+INNER JOIN actor a
+ON a.actor_id = fa.actor_id
+WHERE a.first_name = "JOHN"
+"""
+
+
+# Exercise 5-3
+# Construct a query that returns all addresses that are in the same city. You will need to
+# join the address table to itself, and each row should include two different addresses.
+query = """SELECT a.address, nxt_a.address
+FROM address a
+INNER JOIN address nxt_a
+ON a.city_id=nxt_a.city_id
+WHERE a.address_id!=nxt_a.address_id;
+"""
+
+
 # Execute query
 results = executor.execute_query(query)
 
