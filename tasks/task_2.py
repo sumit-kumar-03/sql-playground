@@ -162,6 +162,64 @@ SELECT EXTRACT(YEAR FROM CURRENT_DATE());
 """
 
 
+# Grouping Concepts
+query = """
+SELECT customer_id, count(*)
+FROM rental
+GROUP BY customer_id
+ORDER BY count(*) DESC 
+LIMIT 5;
+""" 
+
+
+# having filter
+query = """
+SELECT customer_id, count(*)
+FROM rental
+GROUP BY customer_id
+HAVING count(*)>=40
+ORDER BY 2 DESC;
+"""
+
+
+# Aggregate Function
+query = """
+SELECT MAX(amount) max_amt,
+MIN(amount) min_amt,
+AVG(amount) avg_amt,
+SUM(amount) ttl_amt,
+COUNT(*) num_payments
+FROM payment;
+"""
+
+
+# Aggregate Function with group by
+query = """
+SELECT customer_id,
+MAX(amount) max_amt,
+MIN(amount) min_amt,
+AVG(amount) avg_amt,
+SUM(amount) ttl_amt,
+COUNT(*) num_payments
+FROM payment
+GROUP BY customer_id
+ORDER BY ttl_amt
+LIMIT 5;
+"""
+
+
+# Use of distint 
+query = """
+SELECT COUNT(customer_id) num_rows,
+COUNT(DISTINCT customer_id) num_cust
+FROM payment;
+"""
+
+# Use Expressions
+query = """
+SELECT MAX(datediff(return_date,rental_date))
+FROM rental;
+"""
 # Execute query
 results = executor.execute_query(query)
 
