@@ -220,6 +220,78 @@ query = """
 SELECT MAX(datediff(return_date,rental_date))
 FROM rental;
 """
+
+# lets discuss NULL
+query = """
+SELECT customer_id, rental_id, return_date
+FROM rental
+WHERE return_date IS NULL
+LIMIT 5;
+"""
+
+query = """
+SELECT customer_id, rental_id, return_date
+FROM rental
+WHERE return_date IS NOT NULL
+LIMIT 5;
+"""
+
+
+
+## Grouping and Aggregates 
+# Group by
+query = """
+SELECT customer_id, count(rental_id) AS rented
+FROM rental
+GROUP BY customer_id
+ORDER BY rented DESC
+LIMIT 5;
+"""
+
+# Filter condition 
+query = """
+SELECT customer_id, count(*) AS rented
+FROM rental
+GROUP BY customer_id 
+HAVING rented >= 40;
+"""
+
+# Aggregates
+query = """
+SELECT MAX(amount) max_amt,
+MIN(amount) min_amt,
+AVG(amount) avg_amt,
+SUM(amount) ttl_amt,
+COUNT(*) num_payments
+FROM payment;
+"""
+
+# Aggregrate on derived table
+query ="""
+SELECT MAX(rent_num) AS max_num,
+MIN(rent_num) AS min_num,
+AVG(rent_num) AS avg_num,
+SUM(rent_num) AS ttl_num,
+COUNT(rent_num) AS ttl_renters
+FROM (
+SELECT customer_id, count(rental_id) AS rent_num
+FROM rental
+GROUP BY customer_id) as t;"""
+
+
+# Aggregrate on group by field
+query = """
+SELECT customer_id AS CUST,
+MAX(amount) AS max_amt,
+MIN(amount) AS min_amt,
+AVG(amount) AS avg_amt,
+SUM(amount) AS ttl_amt,
+COUNT(*) AS ttl_num_amt
+FROM payment
+GROUP BY customer_id
+ORDER BY ttl_num_amt DESC
+LIMIT 5;
+"""
 # Execute query
 results = executor.execute_query(query)
 
