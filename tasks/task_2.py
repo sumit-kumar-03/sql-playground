@@ -292,6 +292,59 @@ GROUP BY customer_id
 ORDER BY ttl_num_amt DESC
 LIMIT 5;
 """
+
+
+# LIKE operator
+query ="""
+SELECT name AS NAME, 
+name LIKE 'a%' AS starts_with_a,
+name LIKE '%y' AS ends_with_y,
+name LIKE '%a%' AS contains_a
+FROM category; 
+"""
+
+
+# Regex
+query ="""
+SELECT name AS NAME,
+name REGEXP '^a' AS starts_with_a,
+name REGEXP 'y$' AS ends_with_y,
+name REGEXP '.*a.*' AS contains_a
+FROM category;
+"""
+
+
+# Concatenation 
+query ="""
+SELECT concat('hi',', how',' are', ' you') AS sentance;
+"""
+
+
+# Insert :--> INSERT(string_to_insert_in, position_of_insertion, number_of_object_to_be_replaced, obj_to_be_inserted)
+query ="""
+SELECT INSERT('sm',2,0,'a') AS name;
+"""
+
+
+query ="""
+SELECT INSERT('suuit',3,1,'m') AS name;
+"""
+
+
+# Substring 
+query = """
+SELECT SUBSTRING('sumit', 3, 1) AS sub;
+"""
+
+
+# Replace
+query = """
+SELECT REPLACE('sumit sam', 'sam', 'kumar') as rep;
+"""
+
+
+# 
+
 # Execute query
 results = executor.execute_query(query)
 
