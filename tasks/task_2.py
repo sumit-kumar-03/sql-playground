@@ -6,6 +6,9 @@ executor = main()
 
 ## DATA Generation, Manipukation and Conversion
 ## DATA Types :- CHAR, VARCHAR, AND TEXT
+###############
+# Chapter -7
+###############
 
 
 # Create table
@@ -139,26 +142,6 @@ SET text_fld = CONCAT('- START -',text_fld, '- EXTRA -');
 query = """
 SELECT *
 FROM string_tbl;
-"""
-
-
-# Exercise 7-1
-# Write a query that returns the 17th through 25th characters of the string 'Please
-# find the substring in this string'.
-query = """
-SELECT SUBSTRING('Please find the substring in this string', 17, 25);"""
-
-# Exercise 7-2
-# Write a query that returns the absolute value and sign (−1, 0, or 1) of the number
-# −25.76823. Also return the number rounded to the nearest hundredth.
-query = """
-SELECT SIGN(-25.76823);
-"""
-
-# Exercise 7-3
-# Write a query to return just the month portion of the current date.
-query = """
-SELECT EXTRACT(YEAR FROM CURRENT_DATE());
 """
 
 
@@ -343,7 +326,62 @@ SELECT REPLACE('sumit sam', 'sam', 'kumar') as rep;
 """
 
 
-# 
+query = """
+DROP TABLE string_tbl;
+"""
+
+
+query = """
+CREATE TABLE string_tbl
+(char_fld CHAR(30), vchar_fld VARCHAR(30), text_fld TEXT);
+"""
+
+
+query = """
+INSERT INTO string_tbl(char_fld, vchar_fld, text_fld)
+VALUES ("char data", "vchar data", "text data"); 
+"""
+
+
+query = """
+INSERT INTO string_tbl(char_fld)
+VALUES ('with special '' character'); 
+"""
+
+
+query = """
+SELECT *
+FROM string_tbl;
+"""
+
+query = """
+SELECT CONCAT('s' , CHAR(163), 'mit');
+"""
+
+query = """
+SELECT LENGTH(char_fld) AS len_c, LENGTH(vchar_fld) AS len_v, LENGTH(text_fld) AS len_t
+FROM string_tbl;
+"""
+
+# Exercise 7-1
+# Write a query that returns the 17th through 25th characters of the string 'Please
+# find the substring in this string'.
+query = """
+SELECT SUBSTRING('Please find the substring in this string', 17, 25);"""
+
+# Exercise 7-2
+# Write a query that returns the absolute value and sign (−1, 0, or 1) of the number
+# −25.76823. Also return the number rounded to the nearest hundredth.
+query = """
+SELECT SIGN(-25.76823);
+"""
+
+# Exercise 7-3
+# Write a query to return just the month portion of the current date.
+query = """
+SELECT EXTRACT(YEAR FROM CURRENT_DATE());
+"""
+
 
 # Execute query
 results = executor.execute_query(query)
