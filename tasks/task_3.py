@@ -5,7 +5,7 @@ executor = main()
 
 
 ###############
-# Chapter -8
+# Chapter - 8
 ###############
 
 
@@ -192,6 +192,65 @@ FROM payment
 GROUP BY customer_id
 HAVING num_payment >= 40
 LIMIT 5;
+"""
+
+
+
+
+###############
+# Chapter - 9
+###############
+
+
+
+# Query 14: Subquery using IN to find cities located in India
+query = """
+SELECT city_id, city
+FROM city 
+WHERE country_id IN
+(SELECT country_id 
+FROM country 
+WHERE country = 'India')
+LIMIT 10;
+"""
+
+
+
+# Query 15: Subquery using <> to find cities NOT located in India
+query = """
+SELECT city_id, city
+FROM city 
+WHERE country_id <>
+(SELECT country_id 
+FROM country 
+WHERE country = 'India')
+LIMIT 10;
+"""
+
+
+
+# Query 16: Subquery using IN with <> to find cities in countries other than India
+query = """
+SELECT city_id, city
+FROM city 
+WHERE country_id IN
+(SELECT country_id 
+FROM country 
+WHERE country <> 'India')
+LIMIT 10;
+"""
+
+
+
+# Query 17: Subquery using NOT IN with <> (effectively finds cities in India)
+query = """
+SELECT city_id, city
+FROM city 
+WHERE country_id NOT IN
+(SELECT country_id 
+FROM country 
+WHERE country <> 'India')
+LIMIT 10;
 """
 
 
