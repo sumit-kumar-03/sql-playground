@@ -254,6 +254,171 @@ LIMIT 10;
 """
 
 
+
+# Query 18: Subquery with IN to find cities in Nepal or Bhutan
+query = """
+SELECT city_id, city
+FROM city 
+WHERE country_id IN
+(SELECT country_id
+FROM country
+WHERE country = 'Nepal' OR country = 'Bhutan');
+"""
+
+
+
+# Query 19: Subquery with IN using an IN list to find cities in Nepal or Sri Lanka
+query = """
+SELECT city_id, city
+FROM city 
+WHERE country_id IN
+(SELECT country_id
+FROM country
+WHERE country IN ('Nepal','Sri Lanka'));
+"""
+
+
+
+# Query 20: Subquery using <> ALL to find cities that are ONLY in Nepal or Sri Lanka
+query = """
+SELECT city
+FROM city
+WHERE country_id <> ALL 
+(SELECT country_id 
+FROM country 
+WHERE country NOT IN ('Nepal','Sri Lanka'));
+"""
+
+
+
+# Query 21: Subquery using <> ALL to find customers who never made a payment of 0
+query = """
+SELECT first_name
+FROM customer 
+WHERE customer_id <> ALL
+( SELECT customer_id 
+FROM payment
+WHERE amount = 0)
+LIMIT 10;
+"""
+
+
+
+# Query 22: Subquery using > ALL to find customers who rented more films than anyone in North America
+query = """
+SELECT customer_id , count(*)
+FROM rental
+GROUP BY customer_id
+HAVING count(*) > ALL
+(
+SELECT count(*)
+FROM rental r
+INNER JOIN customer c
+ON r.customer_id = c.customer_id
+INNER JOIN address a
+ON c.address_id = a.address_id
+INNER JOIN city ct
+ON a.city_id = ct.city_id
+INNER JOIN country co
+ON ct.country_id = co.country_id
+WHERE co.country IN ('Canada', 'Mexico', 'United States')
+GROUP BY r.customer_id
+);
+"""
+
+
+
+# Query 23: Subquery using > ANY to find customers whose total payments exceed the total payments of at least one South American country
+query = """
+SELECT customer_id,  SUM(amount)
+FROM payment
+GROUP BY customer_id 
+HAVING SUM(amount) > ANY
+(
+SELECT SUM(p.amount)
+FROM payment p
+INNER JOIN customer c
+ON p.customer_id = c.customer_id
+INNER JOIN address a
+ON c.address_id = a.address_id
+INNER JOIN city ct
+ON a.city_id = ct.city_id
+INNER JOIN country co
+ON ct.country_id = co.country_id
+WHERE co.country IN ('Bolivia','Paraguay','Chile')
+GROUP BY co.country  
+);
+"""
+
+
+
+# Query 24: Multiple independent subqueries to find actors with last name MONROE in PG rated films
+query = """
+SELECT fa.actor_id, fa.film_id
+FROM film_actor fa
+WHERE fa.actor_id IN
+(SELECT actor_id 
+FROM actor 
+WHERE last_name = 'MONROE')
+AND
+fa.film_id IN
+(SELECT film_id FROM film WHERE rating = 'PG');
+"""
+
+
+
+# Query 25: Multi-column subquery using IN to find actors with last name MONROE in PG rated films
+query = """
+SELECT actor_id, film_id
+FROM film_actor
+WHERE (actor_id, film_id ) IN
+(SELECT a.actor_id, f.film_id
+FROM actor a
+CROSS JOIN film f
+WHERE a.last_name = 'MONROE'
+AND f.rating = 'PG');
+"""
+
+
+
+# Query 26: Correlated subquery to find customers who have rented exactly 20 times
+query = """
+SELECT c.first_name, c.last_name
+FROM customer c
+WHERE 20 =
+(SELECT count(*)
+FROM rental r 
+WHERE r.customer_id = c.customer_id);
+"""
+
+
+
+# Query 27: Correlated subquery with EXISTS to find customers who rented before 2005-05-25
+query = """
+SELECT c.first_name, c.last_name
+FROM customer c
+WHERE EXISTS
+( SELECT 1 
+FROM rental r
+WHERE r.customer_id = c.customer_id
+AND date(r.rental_date) < '2005-05-25');
+"""
+
+
+
+# Query 28: Correlated subquery with NOT EXISTS to find actors who have never been in an 'R' rated film
+query = """
+SELECT a.first_name, a.last_name
+FROM actor a
+WHERE NOT EXISTS
+( SELECT 1
+FROM film_actor fa
+INNER JOIN film f
+ON fa.film_id = f.film_id
+WHERE fa.actor_id = a.actor_id
+AND f.rating = 'R');
+)
+"""
 # Execute query
 results = executor.execute_query(query)
 
