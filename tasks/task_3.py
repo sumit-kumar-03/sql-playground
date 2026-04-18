@@ -347,7 +347,22 @@ INNER JOIN country co
 ON ct.country_id = co.country_id
 WHERE co.country IN ('Bolivia','Paraguay','Chile')
 GROUP BY co.country  
-);
+);Exercise 9-1
+# Construct a query against the film table that uses a filter condition with a noncorre‐
+# lated subquery against the category table to find all action films (category.name =
+# 'Action').
+# Exercise 9-2
+# Rework the query from Exercise 9-1 using a correlated subquery against the category
+# and film_category tables to achieve the same results.
+# Exercise 9-3
+# Join the following query to a subquery against the film_actor table to show the level
+# of each actor:
+# SELECT 'Hollywood Star' level, 30 min_roles, 99999 max_roles
+# UNION ALL
+# SELECT 'Prolific Actor' level, 20 min_roles, 29 max_roles
+# UNION ALL
+# SELECT 'Newcomer' level, 1 min_roles, 19 max_roles
+
 """
 
 
@@ -419,6 +434,222 @@ WHERE fa.actor_id = a.actor_id
 AND f.rating = 'R');
 )
 """
+
+
+
+# Query 29: Correlated scalar subquery used in an UPDATE statement
+query = """
+UPDATE customer c
+SET c.last_update = 
+(SELECT max(r.rental_date) 
+FROM rental r
+WHERE r.customer_id = c.customer_id);
+"""
+
+
+
+# Query 30: Correlated scalar subquery in an UPDATE statement, protected by an EXISTS correlated subquery
+query = """
+UPDATE customer c
+SET c.last_update = 
+(SELECT max(r.rental_date) 
+FROM rental r
+WHERE r.customer_id = c.customer_id)
+WHERE EXISTS
+(SELECT 1 
+FROM rental r
+WHERE r.customer_id = c.customer_id);
+"""
+
+
+
+# Query 31: Inline view (subquery in FROM clause) to aggregate payments before joining with customer
+query = """
+SELECT c.first_name, c.last_name, pymnt.num_rentals, pymnt.tot_payments
+FROM customer c
+INNER JOIN
+(SELECT customer_id, COUNT(*) AS num_rentals, SUM(amount) AS tot_payments
+FROM payment
+GROUP BY customer_id ) pymnt
+ON c.customer_id = pymnt.customer_id
+LIMIT 10;
+"""
+
+
+
+# Query 32: Building a derived table using UNION ALL
+query = """
+SELECT 'Small Fry' name, 0 low_limit, 74.99 high_limit
+UNION ALL
+SELECT 'Average Joes' name, 75 low_limit, 149.99 high_limit
+UNION ALL
+SELECT 'Heavy Hitters' name, 150 low_limit, 9999999.99 high_limit;
+"""
+
+
+# Query 33: Joining two inline views (one aggregating payments, one derived table from UNION ALL)
+query = """
+SELECT pymnt_grps.name, count(*) num_customers
+FROM
+( SELECT customer_id, count(*) num_rentals, sum(amount) tot_payments
+FROM payment
+GROUP BY customer_id 
+) pymnt
+INNER JOIN
+(SELECT 'Small Fry' name, 0 low_limit, 74.99 high_limit
+UNION ALL
+SELECT 'Average Joes' name, 75 low_limit, 149.99 high_limit
+UNION ALL
+SELECT 'Heavy Hitters' name, 150 low_limit, 9999999.99 high_limit
+) pymnt_grps
+ON pymnt.tot_payments BETWEEN 
+pymnt_grps.low_limit AND pymnt_grps.high_limit
+GROUP BY pymnt_grps.name;
+"""
+
+
+
+# Query 34: Standard join and aggregation without inline views
+query = """
+SELECT c.first_name, c.last_name, ct.city, sum(p.amount) tot_payments, count(*) tot_rentals
+FROM payment p
+INNER JOIN customer c
+ON p.customer_id = c.customer_id
+INNER JOIN address a
+ON c.address_id = a.address_id
+INNER JOIN city ct
+ON a.city_id = ct.city_id
+GROUP BY p.customer_id
+ORDER BY tot_payments DESC
+LIMIT 5;
+"""
+
+
+
+# Query 35: Same logic as previous query but using an inline view for aggregation to improve performance
+query = """
+SELECT c.first_name, c.last_name, ct.city, pymnt.tot_payments, pymnt.tot_rentals
+FROM (
+SELECT customer_id, sum(amount) tot_payments, count(*) tot_rentals
+FROM payment
+GROUP BY customer_id
+) pymnt
+INNER JOIN customer c
+ON pymnt.customer_id = c.customer_id
+INNER JOIN address a
+ON c.address_id = a.address_id
+INNER JOIN city ct
+ON a.city_id = ct.city_id
+ORDER BY pymnt.tot_payments DESC
+LIMIT 5;
+"""
+
+
+
+# Query 36: Common Table Expressions (CTEs) using the WITH clause to break down a complex query
+query = """
+WITH actors_s AS
+(SELECT actor_id, first_name, last_name
+FROM actor
+WHERE last_name LIKE 'S%'
+),
+actors_s_pg AS
+( SELECT s.actor_id, s.first_name, s.last_name, f.film_id, f.title
+FROM actors_s s
+INNER JOIN film_actor fa
+ON s.actor_id = fa.actor_id
+INNER JOIN film f
+ON f.film_id = fa.film_id
+WHERE f.rating = 'PG'
+),
+actors_s_pg_revenue AS
+( SELECT spg.first_name, spg.last_name, p.amount
+FROM actors_s_pg spg
+INNER JOIN inventory i
+ON i.film_id = spg.film_id
+INNER JOIN rental r
+ON i.inventory_id = r.inventory_id
+INNER JOIN payment p
+ON r.rental_id = p.rental_id
+) 
+SELECT spg_rev.first_name, spg_rev.last_name, sum(spg_rev.amount) tot_revenue
+FROM actors_s_pg_revenue  spg_rev
+GROUP BY spg_rev.first_name, spg_rev.last_name
+ORDER BY 3 DESC;
+"""
+
+
+
+# Exercise 9-1
+# Construct a query against the film table that uses a filter condition with a noncorre‐
+# lated subquery against the category table to find all action films (category.name =
+# 'Action').
+
+query = """
+SELECT title
+FROM film
+WHERE film_id IN
+(SELECT film_id 
+FROM film_category fc
+INNER JOIN category c
+ON fc.category_id = c.category_id
+WHERE c.name='Action')
+LIMIT 5;
+"""
+
+
+
+# Exercise 9-2
+# Rework the query from Exercise 9-1 using a correlated subquery against the category
+# and film_category tables to achieve the same results.
+
+query = """
+SELECT title
+FROM film f
+WHERE EXISTS
+( SELECT 1
+FROM film_category fc
+INNER JOIN category c
+ON fc.category_id = c.category_id
+WHERE fc.film_id = f.film_id
+AND c.name = 'Action')
+LIMIT 5;
+"""
+
+
+
+# Exercise 9-3
+# Join the following query to a subquery against the film_actor table to show the level
+# of each actor:
+# SELECT 'Hollywood Star' level, 30 min_roles, 99999 max_roles
+# UNION ALL
+# SELECT 'Prolific Actor' level, 20 min_roles, 29 max_roles
+# UNION ALL
+# SELECT 'Newcomer' level, 1 min_roles, 19 max_roles
+
+
+query = """
+SELECT actor_info.first_name, actor_info.last_name, star_level.level
+FROM (
+SELECT a.first_name, a.last_name, count(*) num_roles
+FROM actor a
+INNER JOIN film_actor fa
+ON a.actor_id = fa.actor_id
+GROUP BY a.actor_id
+) actor_info
+INNER JOIN (
+SELECT 'Hollywood Star' level, 30 min_roles, 99999 max_roles
+UNION ALL
+SELECT 'Prolific Actor' level, 20 min_roles, 29 max_roles
+UNION ALL
+SELECT 'Newcomer' level, 1 min_roles, 19 max_roles
+) star_level
+ON actor_info.num_roles 
+BETWEEN star_level.min_roles AND star_level.max_roles
+LIMIT 5;
+"""
+
+
 # Execute query
 results = executor.execute_query(query)
 
