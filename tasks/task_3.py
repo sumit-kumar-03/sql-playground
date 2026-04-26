@@ -5,7 +5,7 @@ executor = main()
 
 
 ###############
-# Chapter - 8
+# learning sql by alan beaulieu - Chapter - 8
 ###############
 
 
@@ -198,7 +198,7 @@ LIMIT 5;
 
 
 ###############
-# Chapter - 9
+# learning sql by alan beaulieu - Chapter - 9
 ###############
 
 

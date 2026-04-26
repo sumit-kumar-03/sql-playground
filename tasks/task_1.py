@@ -4,6 +4,12 @@ from execute_sql import main
 executor = main()
 
 
+
+###############
+# learning sql by alan beaulieu - Chapter - 3
+###############
+
+
 # Show all databases
 query = "SHOW DATABASES;"
 
@@ -44,6 +50,13 @@ query = "SELECT DISTINCT customer_id FROM rental WHERE date(rental_date)='2005-0
 # | TERRANCE.ROUSH@sakilacustomer.org | 2005-06-23 21:53:46 |
 # | MIRIAM.MCKINNEY@sakilacustomer.org | 2005-06-21 17:12:08 |
 query = "SELECT c.email, r.return_date FROM customer c INNER JOIN rental r ON c.customer_id = r.customer_id WHERE date(r.rental_date) = '2005-06-14' ORDER BY r.return_date DESC"
+
+
+
+###############
+# learning sql by alan beaulieu - Chapter - 4
+###############
+
 
 
 # Equality condition
@@ -95,6 +108,13 @@ query = "SELECT * FROM payment WHERE amount IN (1.98, 7.98, 9.98);"
 # Construct a query that finds all customers whose last name contains an A in the sec‐
 # ond position and a W anywhere after the A.
 query = "SELECT * from customer WHERE last_name LIKE '_A%W%'"
+
+
+
+###############
+# learning sql by alan beaulieu - Chapter - 5
+###############
+
 
 
 # JOINS
@@ -166,6 +186,13 @@ INNER JOIN address nxt_a
 ON a.city_id=nxt_a.city_id
 WHERE a.address_id!=nxt_a.address_id;
 """
+
+
+
+###############
+# learning sql by alan beaulieu - Chapter - 6
+###############
+
 
 
 # Set Operators- union all (Duplicates will present)
