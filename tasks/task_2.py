@@ -7,7 +7,7 @@ executor = main()
 ## DATA Generation, Manipukation and Conversion
 ## DATA Types :- CHAR, VARCHAR, AND TEXT
 ###############
-# Chapter - 7
+# learning sql by alan beaulieu - Chapter - 7
 ###############
 
 
