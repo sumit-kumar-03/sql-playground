@@ -32,6 +32,7 @@ executor = main()
 
 
 
+# Query 1: Transaction script to transfer $50 from account 123 to account 789 using debit/credit updates and transaction records
 """
 START TRANSACTION;
 
@@ -61,6 +62,132 @@ VALUES (NOW(), 789, 'C', 50);
 
 COMMIT;
 """
+
+
+
+
+###############
+# index and constraints by alan beaulieu - Chapter - 13
+###############
+
+
+
+# Query 2: Select customers whose last name starts with 'Y'
+query = """
+SELECT first_name, last_name
+FROM customer
+WHERE last_name LIKE 'Y%';
+"""
+
+
+
+# Query 3: Add a simple index on customer.email
+query = """
+ALTER TABLE customer
+ADD INDEX idx_email (email);
+"""
+
+
+
+# Query 4: Create index on customer.email using CREATE INDEX syntax
+query = """
+CREATE INDEX idx_email
+ON customer (email);
+"""
+
+
+
+# Query 5: Show indexes defined on the customer table
+query = """
+SHOW INDEX FROM customer ;
+"""
+
+
+
+# Query 6: Drop the previously created index on customer.email
+query = """
+ALTER TABLE customer
+DROP INDEX idx_email;
+"""
+
+
+
+# Query 7: Add a unique index on customer.email to enforce uniqueness
+query = """
+ALTER TABLE customer
+ADD UNIQUE INDEX idx_email (email);
+"""
+
+
+
+# Query 8: Add composite index on last_name and first_name for faster lookups
+query = """
+ALTER TABLE customer
+ADD INDEX idx_full_name (last_name, first_name);
+"""
+
+
+
+# Query 9: Explain execution plan for selecting customers with first name starting 'S' and last name starting 'P'
+query = """
+EXPLAIN
+SELECT customer_id, first_name, last_name
+FROM customer
+WHERE first_name LIKE 'S%' AND last_name LIKE 'P%';
+"""
+
+
+
+# Query 10: Add foreign key constraint linking customer.address_id to address.address_id
+query = """
+ALTER TABLE customer
+ADD CONSTRAINT fk_customer_address FOREIGN KEY (address_id)
+REFERENCES address (address_id) ON DELETE RESTRICT ON UPDATE CASCADE;
+"""
+
+
+
+# Query 11: Add foreign key constraint linking customer.store_id to store.store_id
+query = """
+ALTER TABLE customer
+ADD CONSTRAINT fk_customer_store FOREIGN KEY (store_id)
+REFERENCES store (store_id) ON DELETE RESTRICT ON UPDATE CASCADE;
+"""
+
+
+
+
+# Exercise 13-1
+# Generate an alter table statement for the rental table so that an error will be
+# raised if a row having a value found in the rental.customer_id column is deleted
+# from the customer table.
+
+# Query 12: Add foreign key to rental.customer_id referencing customer.customer_id with RESTRICT on delete
+query = """
+ALTER TABLE rental
+ADD CONSTRAINT fk_rental_customer FOREIGN KEY (customer_id)
+REFERENCES customer (customer_id) ON DELETE RESTRICT ON UPDATE CASCADE;
+"""
+
+
+
+# Exercise 13-2
+# Generate a multicolumn index on the payment table that could be used by both of the
+# following queries:
+# SELECT customer_id, payment_date, amount
+# FROM payment
+# WHERE payment_date > cast('2019-12-31 23:59:59' as datetime);
+# SELECT customer_id, payment_date, amount
+# FROM payment
+# WHERE payment_date > cast('2019-12-31 23:59:59' as datetime)
+#  AND am
+
+# Query 13: Add multi-column index on payment.payment_date and amount for query optimization
+query = """
+ALTER TABLE payment
+ADD INDEX idx_pay_d_amt (payment_date, amount);
+"""
+
 
 # Execute query
 results = executor.execute_query(query)
