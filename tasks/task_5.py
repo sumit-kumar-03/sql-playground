@@ -23,6 +23,7 @@ LIMIT 10;
 
 
 
+# Example of a searched CASE expression
 ## SEARCHED CASE
 """
 CASE 
@@ -51,12 +52,13 @@ LIMIT 10;
 
 
 
+# Example of a simple CASE expression
 ## SIMPLE CASE
 """
 CASE value_to_compare_with
 WHEN value_to_be_compared_1 THEN value_1
 WHEN value_to_be_compared_2 THEN value_2
-WHEN value_to_be_compared_3 THEN value_3
+WHEN value_to_be_compiled_3 THEN value_3
 ELSE default_value
 END
 """
