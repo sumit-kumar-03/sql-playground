@@ -67,7 +67,7 @@ COMMIT;
 
 
 ###############
-# index and constraints by alan beaulieu - Chapter - 13
+# learning sql by alan beaulieu - Chapter - 13
 ###############
 
 
@@ -193,7 +193,7 @@ ADD INDEX idx_pay_d_amt (payment_date, amount);
 
 
 ###############
-# views by alan beaulieu - Chapter - 14
+# learning sql by alan beaulieu - Chapter - 14
 ###############
 
 
